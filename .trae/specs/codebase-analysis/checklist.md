@@ -1,0 +1,4 @@
+- [x] 成功扫描并理解了 `rust/crates/` 下所有核心 crate（api, runtime, tools, commands 等）的职责与架构。
+- [x] 成功扫描并理解了 `src/` 目录下 Python 原型代码的核心逻辑与数据流。
+- [x] 准确描述了 Rust 各个核心模块之间的依赖关系和交互方式。
+- [x] 输出了包含架构总览、模块关系及二开扩展点的分析文档（如 `ARCHITECTURE.md`）。
