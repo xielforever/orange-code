@@ -1,5 +1,8 @@
 {
   "name": "orange-desktop",
+  "description": "Orange Desktop Client with Rust backend",
+  "author": "xielforever",
+  "repository": "https://github.com/xielforever/orange-code",
   "private": true,
   "version": "0.0.0",
   "type": "module",
