@@ -1,301 +1,101 @@
-# Orange Code
+# Orange Code Desktop
 
 <p align="center">
-  <strong>基于 Rust 和 Python 的本地 AI 代码助手个人二次开发项目</strong>
+  <img src="assets/logos/orange_code_logo_transparent.png" alt="Orange Code Logo" width="200" />
+</p>
+
+<p align="center">
+  <strong>基于 Rust 和 React 的本地 AI 代码助手跨平台桌面客户端</strong>
 </p>
 
 > [!IMPORTANT]
-> **版本:** v1.0.0
+> **当前版本:** v0.0.5
 > 
-> **项目来源说明:** 本项目基于开源项目 [Orange Code](https://github.com/instructkr/orange-code) 的架构进行二次开发与重构。Orange Code 本身受 Claude Code 启发。在此特别感谢原作者的开源贡献。本项目现作为个人工具 **Orange Code** 独立维护，用于探索 Agent 框架设计、工具编排和上下文管理。
+> **项目说明:** 本项目基于开源项目 [Orange Code](https://github.com/instructkr/orange-code) 的底层 Rust 架构进行二次开发，为其构建了一个现代化的、跨平台的桌面客户端（基于 Electron + React）。本项目现作为个人效率工具 **Orange Code Desktop** 独立维护，专注于提供安全、高效的本地 AI 编程辅助体验。
 
 ---
 
-## 核心特性
+## 🌟 核心特性
 
-Orange Code 是一个基于安全 Rust 实现的本地代码助手 CLI 工具，旨在提供强大的本地代理（Agent）体验。
+Orange Code Desktop 结合了 Rust 的极速性能与 Web 技术的灵活展现，为您提供最顺畅的本地代理（Agent）编程体验：
 
-当前项目同时包含 Python 原型版本和 Rust 高性能版本：
-
-### Rust 核心模块 (`rust/` 目录)
-
-目前 Rust 工作区是项目的主要交互界面。它包含以下核心组件：
-
-- `crates/api-client` — API 客户端，支持多种提供商抽象、OAuth 认证以及流式输出
-- `crates/runtime` — 核心运行时，包含会话状态管理、上下文压缩、MCP (Model Context Protocol) 编排以及提示词构建
-- `crates/tools` — 工具清单定义与执行框架，内置终端、文件读写、搜索等工具
-- `crates/commands` — 斜杠命令 (Slash commands)、技能发现和配置检查
-- `crates/plugins` — 插件模型、生命周期钩子管道和捆绑插件
-- `crates/compat-harness` — 用于上游编辑器集成的兼容层
-- `crates/orange-cli` — 交互式 REPL、Markdown 渲染以及项目初始化流程
-
-**编译与运行 Rust 版本:**
-
-<!-- Upstream/English Version Below -->
-
-# Rewriting Project Orange Code
-
-<p align="center">
-  <strong>⭐ The fastest repo in history to surpass 50K stars, reaching the milestone in just 2 hours after publication ⭐</strong>
-</p>
-
-<p align="center">
-  <a href="https://star-history.com/#instructkr/orange-code&Date">
-    <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=instructkr/orange-code&type=Date&theme=dark" />
-      <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=instructkr/orange-code&type=Date" />
-      <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=instructkr/orange-code&type=Date" width="600" />
-    </picture>
-  </a>
-</p>
-
-<p align="center">
-  <img src="assets/oranged-hero.jpeg" alt="Orange" width="300" />
-</p>
-
-<p align="center">
-  <strong>Better Harness Tools, not merely storing the archive of leaked Orange Code</strong>
-</p>
-
-<p align="center">
-  <a href="https://github.com/sponsors/instructkr"><img src="https://img.shields.io/badge/Sponsor-%E2%9D%A4-pink?logo=github&style=for-the-badge" alt="Sponsor on GitHub" /></a>
-</p>
-
-> [!IMPORTANT]
-> **Rust port is now in progress** on the [`dev/rust`](https://github.com/instructkr/orange-code/tree/dev/rust) branch and is expected to be merged into main today. The Rust implementation aims to deliver a faster, memory-safe harness runtime. Stay tuned — this will be the definitive version of the project.
-
-> If you find this work useful, consider [sponsoring @instructkr on GitHub](https://github.com/sponsors/instructkr) to support continued open-source harness engineering research.
+- 🚀 **极速响应**: 后端采用安全且高性能的 Rust 编写，资源占用极低。
+- 💻 **跨平台桌面端**: 基于 Electron 构建，完美支持 Windows、macOS 和 Linux。
+- ⚡ **流式输出**: 通过 WebSocket 实现 JSON-RPC 双向通信，AI 回答毫秒级逐字显示。
+- 🛡️ **沙箱安全**: 严格的 Electron 上下文隔离（Context Isolation）与沙箱（Sandbox）机制，安全执行代码操作。
+- 🎨 **现代化 UI**: 采用 React + Vite 构建的丝滑用户界面。
 
 ---
 
-## Rust Port
+## 🏗️ 架构概览
 
-The Rust workspace under `rust/` is the current systems-language port of the project.
+系统采用典型的本地 C/S (Client/Server) 架构：
 
-It currently includes:
-
-- `crates/api-client` — API client with provider abstraction, OAuth, and streaming support
-- `crates/runtime` — session state, compaction, MCP orchestration, prompt construction
-- `crates/tools` — tool manifest definitions and execution framework
-- `crates/commands` — slash commands, skills discovery, and config inspection
-- `crates/plugins` — plugin model, hook pipeline, and bundled plugins
-- `crates/compat-harness` — compatibility layer for upstream editor integration
-- `crates/orange-cli` — interactive REPL, markdown rendering, and project bootstrap/init flows
-
-Run the Rust build:
-
-```bash
-cd rust
-cargo build --release
-./target/release/orange --help
-```
-
-### Python 原型工作区 (`src/` 目录)
-
-项目根目录的 `src/` 和 `tests/` 包含了早期的 Python 移植原型。它实现了核心架构模式的验证，目前作为参考和辅助测试存在。
-
-**运行 Python 版本验证:**
-
-<!-- Upstream/English Version Below -->
-
-```
-
-## Backstory
-
-At 4 AM on March 31, 2026, I woke up to my phone blowing up with notifications. The Orange Code source had been exposed, and the entire dev community was in a frenzy. My girlfriend in Korea was genuinely worried I might face legal action from the original authors just for having the code on my machine — so I did what any engineer would do under pressure: I sat down, ported the core features to Python from scratch, and pushed it before the sun came up.
-
-The whole thing was orchestrated end-to-end using [oh-my-codex (OmX)](https://github.com/Yeachan-Heo/oh-my-codex) by [@bellman_ych](https://x.com/bellman_ych) — a workflow layer built on top of OpenAI's Codex ([@OpenAIDevs](https://x.com/OpenAIDevs)). I used `$team` mode for parallel code review and `$ralph` mode for persistent execution loops with architect-level verification. The entire porting session — from reading the original harness structure to producing a working Python tree with tests — was driven through OmX orchestration.
-
-The result is a clean-room Python rewrite that captures the architectural patterns of Orange Code's agent harness without copying any proprietary source. I'm now actively collaborating with [@bellman_ych](https://x.com/bellman_ych) — the creator of OmX himself — to push this further. The basic Python foundation is already in place and functional, but we're just getting started. **Stay tuned — a much more capable version is on the way.**
-
-The Rust port was developed with both [oh-my-codex (OmX)](https://github.com/Yeachan-Heo/oh-my-codex) and [oh-my-opencode (OmO)](https://github.com/code-yeongyu/oh-my-openagent): OmX drove scaffolding, orchestration, and architecture direction, while OmO was used for later implementation acceleration and verification support.
-
-https://github.com/instructkr/orange-code
-
-![Tweet screenshot](assets/tweet-screenshot.png)
-
-## The Creators Featured in Wall Street Journal For Avid Orange Code Fans
-
-I've been deeply interested in **harness engineering** — studying how agent systems wire tools, orchestrate tasks, and manage runtime context. This isn't a sudden thing. The Wall Street Journal featured my work earlier this month, documenting how I've been one of the most active power users exploring these systems:
-
-> AI startup worker Sigrid Jin, who attended the Seoul dinner, single-handedly used 25 billion of Orange Code tokens last year. At the time, usage limits were looser, allowing early enthusiasts to reach tens of billions of tokens at a very low cost.
->
-> Despite his countless hours with Orange Code, Jin isn't faithful to any one AI lab. The tools available have different strengths and weaknesses, he said. Codex is better at reasoning, while Orange Code generates cleaner, more shareable code.
->
-> Jin flew to San Francisco in February for Orange Code's first birthday party, where attendees waited in line to compare notes with Cherny. The crowd included a practicing cardiologist from Belgium who had built an app to help patients navigate care, and a California lawyer who made a tool for automating building permit approvals using Orange Code.
->
-> "It was basically like a sharing party," Jin said. "There were lawyers, there were doctors, there were dentists. They did not have software engineering backgrounds."
->
-> — *The Wall Street Journal*, March 21, 2026, [*"The Trillion Dollar Race to Automate Our Entire Lives"*](https://lnkd.in/gs9td3qd)
-
-![WSJ Feature](assets/wsj-feature.png)
+- **前端 (React + Vite)**：运行在 Electron 的渲染进程沙箱中。负责 GUI 呈现、用户输入、会话管理和流式消息的展示。
+- **主进程 (Electron Node.js)**：负责窗口管理、系统级 API 调用、安全沙箱配置，以及**启动并管理 Rust 子进程的生命周期**。
+- **后端 (Rust)**：在现有的 `orange` CLI 基础上增加了 `--server` 模式。启动后监听本地固定端口，接收 WebSocket 连接，解析 JSON-RPC 请求并执行核心的 AI 逻辑。
 
 ---
 
-## Porting Status
-
-The main source tree is now Python-first.
-
-- `src/` contains the active Python porting workspace
-- `tests/` verifies the current Python workspace
-- the exposed snapshot is no longer part of the tracked repository state
-
-The current Python workspace is not yet a complete one-to-one replacement for the original system, but the primary implementation surface is now Python.
-
-## Why this rewrite exists
-
-I originally studied the exposed codebase to understand its harness, tool wiring, and agent workflow. After spending more time with the legal and ethical questions—and after reading the essay linked below—I did not want the exposed snapshot itself to remain the main tracked source tree.
-
-This repository now focuses on Python porting work instead.
-
-## Repository Layout
+## 📂 目录结构
 
 ```text
-.
-├── src/                                # Python porting workspace
-│   ├── __init__.py
-│   ├── commands.py
-│   ├── main.py
-│   ├── models.py
-│   ├── port_manifest.py
-│   ├── query_engine.py
-│   ├── task.py
-│   └── tools.py
-├── rust/                               # Rust port (orange CLI)
-│   ├── crates/api/                     # API client + streaming
-│   ├── crates/runtime/                 # Session, tools, MCP, config
-│   ├── crates/orange-cli/               # Interactive CLI binary
-│   ├── crates/plugins/                 # Plugin system
-│   ├── crates/commands/                # Slash commands
-│   ├── crates/server/                  # HTTP/SSE server (axum)
-│   ├── crates/lsp/                    # LSP client integration
-│   └── crates/tools/                   # Tool specs
-├── tests/                              # Python verification
-├── assets/omx/                         # OmX workflow screenshots
-├── 2026-03-09-is-legal-the-same-as-legitimate-ai-reimplementation-and-the-erosion-of-copyleft.md
-└── README.md
-```
-
-## Python Workspace Overview
-
-The new Python `src/` tree currently provides:
-
-- **`port_manifest.py`** — summarizes the current Python workspace structure
-- **`models.py`** — dataclasses for subsystems, modules, and backlog state
-- **`commands.py`** — Python-side command port metadata
-- **`tools.py`** — Python-side tool port metadata
-- **`query_engine.py`** — renders a Python porting summary from the active workspace
-- **`main.py`** — a CLI entrypoint for manifest and summary output
-
-## Quickstart
-
-Render the Python porting summary:
-
-```bash
-python3 -m src.main summary
-```
-
-Print the current Python workspace manifest:
-
-```bash
-python3 -m src.main manifest
-```
-
-List the current Python modules:
-
-```bash
-python3 -m src.main subsystems --limit 16
-```
-
-Run verification:
-
-```bash
-python3 -m unittest discover -s tests -v
-```
-
-## 目录结构
-
-```text
-.
-├── src/                                # Python 原型工作区
-├── tests/                              # Python 测试文件
-├── rust/                               # Rust 核心实现 (CLI 工具)
-│   ├── crates/api/                     # API 客户端与流式处理
-│   ├── crates/runtime/                 # 会话、工具、MCP、配置
-│   ├── crates/orange-cli/                # 交互式 CLI 终端
-│   ├── crates/plugins/                 # 插件系统
-│   ├── crates/commands/                # 斜杠命令实现
-│   ├── crates/server/                  # HTTP/SSE 服务器 (axum)
-│   ├── crates/lsp/                     # LSP 客户端集成支持
-│   └── crates/tools/                   # 核心工具规范与实现
-├── assets/                             # 静态资源文件
-├── ORANGE.md                           # Orange Code 专属项目指令配置
+orange-code/
+├── client/                             # Electron + Vite + React 桌面端源码
+│   ├── electron/                       # Electron 主进程代码 (进程管理/沙箱配置)
+│   ├── src/                            # React 前端界面代码 (Hooks/组件)
+│   ├── package.json                    # 前端依赖与打包配置
+│   └── vite.config.ts                  # Vite 构建配置
+├── rust/                               # Rust 核心后端 (原 CLI 服务)
+│   ├── crates/api-client/              # API 客户端与流式处理
+│   ├── crates/runtime/                 # 核心运行时 (上下文、MCP 编排)
+│   ├── crates/orange-cli/              # 包含 server 模式的入口
+│   └── ...
+├── build_scripts/                      # 自动化打包脚本
+├── assets/                             # 静态资源与 Logo 文件
 └── README.md                           # 项目说明文档
 ```
 
-## 免责声明
+---
 
-- 本项目为基于 [Orange Code](https://github.com/instructkr/orange-code) 源码的二次开发。
-- 本项目纯粹出于技术研究、个人学习与工具定制目的而创建和维护，不隶属于原作者团队，也不声称对原始代码的完全所有权。
+## 🛠️ 快速开始
 
-<!-- Upstream/English Version Below -->
+### 开发环境调试
 
-Run the parity audit against the local ignored archive (when present):
+1. **环境准备**：确保您已安装 [Node.js](https://nodejs.org/) (v20+) 和 [Rust 工具链](https://rustup.rs/)。
+2. **构建 Rust 后端**：
+   ```bash
+   cd rust
+   cargo build --release
+   cd ..
+   ```
+3. **启动客户端开发模式**：
+   ```bash
+   cd client
+   npm install
+   npm run dev
+   ```
+   > 这将自动启动 Vite 服务并拉起 Electron 窗口，同时会在后台自动启动 Rust WebSocket 服务器。
+
+### 打包发布版
+
+如果您想在本地构建可执行文件（`.exe`, `.dmg`, `.AppImage`）：
 
 ```bash
-python3 -m src.main parity-audit
+./build_scripts/build_all.sh
 ```
+构建产物将输出在 `client/release/` 目录下。
 
-Inspect mirrored command/tool inventories:
+---
 
-```bash
-python3 -m src.main commands --limit 10
-python3 -m src.main tools --limit 10
-```
+## 🤖 自动化 CI/CD
 
-## Current Parity Checkpoint
+本项目已配置了完整的 GitHub Actions 工作流。当您向仓库推送以 `v` 开头的 Tag（例如 `v1.0.0`）时，会自动触发跨平台（Ubuntu、Windows、macOS）的构建流水线，并将打包好的安装包自动发布至 GitHub Releases 页面。
 
-The port now mirrors the archived root-entry file surface, top-level subsystem names, and command/tool inventories much more closely than before. However, it is **not yet** a full runtime-equivalent replacement for the original TypeScript system; the Python tree still contains fewer executable runtime slices than the archived source.
+---
 
-## Built with `oh-my-codex` and `oh-my-opencode`
+## 📜 免责声明
 
-This repository's porting, cleanroom hardening, and verification workflow was AI-assisted with Yeachan Heo's tooling stack, with **oh-my-codex (OmX)** as the primary scaffolding and orchestration layer.
-
-- [**oh-my-codex (OmX)**](https://github.com/Yeachan-Heo/oh-my-codex) — scaffolding, orchestration, architecture direction, and core porting workflow
-- [**oh-my-opencode (OmO)**](https://github.com/code-yeongyu/oh-my-openagent) — implementation acceleration, cleanup, and verification support
-
-Key workflow patterns used during the port:
-
-- **`$team` mode:** coordinated parallel review and architectural feedback
-- **`$ralph` mode:** persistent execution, verification, and completion discipline
-- **Cleanroom passes:** naming/branding cleanup, QA, and release validation across the Rust workspace
-- **Manual and live validation:** build, test, manual QA, and real API-path verification before publish
-
-### OmX workflow screenshots
-
-![OmX workflow screenshot 1](assets/omx/omx-readme-review-1.png)
-
-*Ralph/team orchestration view while the README and essay context were being reviewed in terminal panes.*
-
-![OmX workflow screenshot 2](assets/omx/omx-readme-review-2.png)
-
-*Split-pane review and verification flow during the final README wording pass.*
-
-## Community
-
-<p align="center">
-  <a href="https://instruct.kr/"><img src="assets/instructkr.png" alt="instructkr" width="400" /></a>
-</p>
-
-Join the [**instructkr Discord**](https://instruct.kr/) — the best Korean language model community. Come chat about LLMs, harness engineering, agent workflows, and everything in between.
-
-[![Discord](https://img.shields.io/badge/Join%20Discord-instruct.kr-5865F2?logo=discord&style=for-the-badge)](https://instruct.kr/)
-
-## Star History
-
-See the chart at the top of this README.
-
-## Ownership / Affiliation Disclaimer
-
-- This repository does **not** claim ownership of the original Orange Code source material.
-- This repository is **not affiliated with, endorsed by, or maintained by the original authors**.
+- 本项目的 Rust 底层架构衍生自 [Orange Code](https://github.com/instructkr/orange-code)。
+- 本桌面端重构项目纯粹出于技术研究、个人学习与工具定制目的而创建和维护。
+- 本项目不隶属于原作者团队，也不声称对原始底层架构代码的完全所有权。
