@@ -1,7 +1,8 @@
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, dialog } from 'electron';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
 import { spawn, ChildProcess } from 'child_process';
+import * as fs from 'fs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -16,6 +17,15 @@ function startRustServer() {
   const binaryPath = app.isPackaged 
     ? path.join(process.resourcesPath, 'bin', binaryName)
     : path.join(__dirname, '../../rust/target/release', binaryName);
+
+  if (!fs.existsSync(binaryPath)) {
+    console.error(`Rust backend binary not found at: ${binaryPath}`);
+    dialog.showErrorBox(
+      'Backend Not Found', 
+      `The Rust backend executable was not found.\nExpected path: ${binaryPath}`
+    );
+    return;
+  }
 
   try {
     rustProcess = spawn(binaryPath, ['--server', '--port', RUST_PORT.toString()]);
