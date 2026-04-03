@@ -23,10 +23,11 @@
     },
     "extraResources": [
       {
-        "from": "../rust/target/release/orange${ext}",
-        "to": "bin/orange${ext}",
+        "from": "../rust/target/release/orange*",
+        "to": "bin/",
         "filter": [
-          "**/*"
+          "orange",
+          "orange.exe"
         ]
       }
     ],
