@@ -1,0 +1,10 @@
+--- rust/crates/orange-cli/src/init.rs
++++ rust/crates/orange-cli/src/init.rs
+@@ -354,7 +354,7 @@
+ 
+         let report = initialize_repo(&root).expect("init should succeed");
+         let rendered = report.render();
+-        assert!(rendered.contains(".orange/           created"));
++        assert!(rendered.contains(".orange/           created"), "Rendered: {}", rendered);
+         assert!(rendered.contains(".orange.json       created"));
+         assert!(rendered.contains(".gitignore       created"));

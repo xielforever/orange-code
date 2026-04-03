@@ -310,7 +310,7 @@ mod tests {
     }
 
     fn write_hook_plugin(root: &Path, name: &str, pre_message: &str, post_message: &str) {
-        fs::create_dir_all(root.join(".claw-plugin")).expect("manifest dir");
+        fs::create_dir_all(root.join(".orange-plugin")).expect("manifest dir");
         fs::create_dir_all(root.join("hooks")).expect("hooks dir");
         fs::write(
             root.join("hooks").join("pre.sh"),
@@ -323,7 +323,7 @@ mod tests {
         )
         .expect("write post hook");
         fs::write(
-            root.join(".claw-plugin").join("plugin.json"),
+            root.join(".orange-plugin").join("plugin.json"),
             format!(
                 "{{\n  \"name\": \"{name}\",\n  \"version\": \"1.0.0\",\n  \"description\": \"hook plugin\",\n  \"hooks\": {{\n    \"PreToolUse\": [\"./hooks/pre.sh\"],\n    \"PostToolUse\": [\"./hooks/post.sh\"]\n  }}\n}}"
             ),
@@ -384,7 +384,7 @@ mod tests {
     fn pre_tool_use_denies_when_plugin_hook_exits_two() {
         // Use a script that executes directly to avoid loading user profile dotfiles in test environments
         // The script just writes our expected output and exits with 2
-        let temp_dir = std::env::temp_dir().join("claw_hook_test");
+        let temp_dir = std::env::temp_dir().join("orange_hook_test");
         std::fs::create_dir_all(&temp_dir).unwrap();
         let script_path = temp_dir.join("exit2.sh");
         std::fs::write(&script_path, "#!/bin/sh\necho 'blocked by plugin'\nexit 2").unwrap();

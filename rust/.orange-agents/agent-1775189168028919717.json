@@ -1,0 +1,14 @@
+{
+  "agentId": "agent-1775189168028919717",
+  "name": "verify-the-branch",
+  "description": "Verify the branch",
+  "subagentType": "Explore",
+  "model": "claude-opus-4-6",
+  "status": "failed",
+  "outputFile": "/workspace/rust/.orange-agents/agent-1775189168028919717.md",
+  "manifestFile": "/workspace/rust/.orange-agents/agent-1775189168028919717.json",
+  "createdAt": "1775189168",
+  "startedAt": "1775189168",
+  "completedAt": "1775189168",
+  "error": "missing Orange credentials; export ANTHROPIC_AUTH_TOKEN or ANTHROPIC_API_KEY before calling the Orange API"
+}

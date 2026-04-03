@@ -5,10 +5,10 @@
   "subagentType": "general-purpose",
   "model": "claude-opus-4-6",
   "status": "failed",
-  "outputFile": "/workspace/rust/.claw-agents/agent-1775187573010251747.md",
-  "manifestFile": "/workspace/rust/.claw-agents/agent-1775187573010251747.json",
+  "outputFile": "/workspace/rust/.orange-agents/agent-1775187573010251747.md",
+  "manifestFile": "/workspace/rust/.orange-agents/agent-1775187573010251747.json",
   "createdAt": "1775187573",
   "startedAt": "1775187573",
   "completedAt": "1775187573",
-  "error": "missing Claw credentials; export ANTHROPIC_AUTH_TOKEN or ANTHROPIC_API_KEY before calling the Claw API"
+  "error": "missing Orange credentials; export ANTHROPIC_AUTH_TOKEN or ANTHROPIC_API_KEY before calling the Orange API"
 }

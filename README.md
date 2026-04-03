@@ -7,7 +7,7 @@
 > [!IMPORTANT]
 > **版本:** v1.0.0
 > 
-> **项目来源说明:** 本项目基于开源项目 [Claw Code](https://github.com/instructkr/claw-code) 的架构进行二次开发与重构。Claw Code 本身受 Claude Code 启发。在此特别感谢原作者的开源贡献。本项目现作为个人工具 **Orange Code** 独立维护，用于探索 Agent 框架设计、工具编排和上下文管理。
+> **项目来源说明:** 本项目基于开源项目 [Orange Code](https://github.com/instructkr/orange-code) 的架构进行二次开发与重构。Orange Code 本身受 Claude Code 启发。在此特别感谢原作者的开源贡献。本项目现作为个人工具 **Orange Code** 独立维护，用于探索 Agent 框架设计、工具编排和上下文管理。
 
 ---
 
@@ -27,34 +27,34 @@ Orange Code 是一个基于安全 Rust 实现的本地代码助手 CLI 工具，
 - `crates/commands` — 斜杠命令 (Slash commands)、技能发现和配置检查
 - `crates/plugins` — 插件模型、生命周期钩子管道和捆绑插件
 - `crates/compat-harness` — 用于上游编辑器集成的兼容层
-- `crates/claw-cli` — 交互式 REPL、Markdown 渲染以及项目初始化流程
+- `crates/orange-cli` — 交互式 REPL、Markdown 渲染以及项目初始化流程
 
 **编译与运行 Rust 版本:**
 
 <!-- Upstream/English Version Below -->
 
-# Rewriting Project Claw Code
+# Rewriting Project Orange Code
 
 <p align="center">
   <strong>⭐ The fastest repo in history to surpass 50K stars, reaching the milestone in just 2 hours after publication ⭐</strong>
 </p>
 
 <p align="center">
-  <a href="https://star-history.com/#instructkr/claw-code&Date">
+  <a href="https://star-history.com/#instructkr/orange-code&Date">
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=instructkr/claw-code&type=Date&theme=dark" />
-      <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=instructkr/claw-code&type=Date" />
-      <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=instructkr/claw-code&type=Date" width="600" />
+      <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=instructkr/orange-code&type=Date&theme=dark" />
+      <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=instructkr/orange-code&type=Date" />
+      <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=instructkr/orange-code&type=Date" width="600" />
     </picture>
   </a>
 </p>
 
 <p align="center">
-  <img src="assets/clawd-hero.jpeg" alt="Claw" width="300" />
+  <img src="assets/oranged-hero.jpeg" alt="Orange" width="300" />
 </p>
 
 <p align="center">
-  <strong>Better Harness Tools, not merely storing the archive of leaked Claw Code</strong>
+  <strong>Better Harness Tools, not merely storing the archive of leaked Orange Code</strong>
 </p>
 
 <p align="center">
@@ -62,7 +62,7 @@ Orange Code 是一个基于安全 Rust 实现的本地代码助手 CLI 工具，
 </p>
 
 > [!IMPORTANT]
-> **Rust port is now in progress** on the [`dev/rust`](https://github.com/instructkr/claw-code/tree/dev/rust) branch and is expected to be merged into main today. The Rust implementation aims to deliver a faster, memory-safe harness runtime. Stay tuned — this will be the definitive version of the project.
+> **Rust port is now in progress** on the [`dev/rust`](https://github.com/instructkr/orange-code/tree/dev/rust) branch and is expected to be merged into main today. The Rust implementation aims to deliver a faster, memory-safe harness runtime. Stay tuned — this will be the definitive version of the project.
 
 > If you find this work useful, consider [sponsoring @instructkr on GitHub](https://github.com/sponsors/instructkr) to support continued open-source harness engineering research.
 
@@ -80,14 +80,14 @@ It currently includes:
 - `crates/commands` — slash commands, skills discovery, and config inspection
 - `crates/plugins` — plugin model, hook pipeline, and bundled plugins
 - `crates/compat-harness` — compatibility layer for upstream editor integration
-- `crates/claw-cli` — interactive REPL, markdown rendering, and project bootstrap/init flows
+- `crates/orange-cli` — interactive REPL, markdown rendering, and project bootstrap/init flows
 
 Run the Rust build:
 
 ```bash
 cd rust
 cargo build --release
-./target/release/claw --help
+./target/release/orange --help
 ```
 
 ### Python 原型工作区 (`src/` 目录)
@@ -102,27 +102,27 @@ cargo build --release
 
 ## Backstory
 
-At 4 AM on March 31, 2026, I woke up to my phone blowing up with notifications. The Claw Code source had been exposed, and the entire dev community was in a frenzy. My girlfriend in Korea was genuinely worried I might face legal action from the original authors just for having the code on my machine — so I did what any engineer would do under pressure: I sat down, ported the core features to Python from scratch, and pushed it before the sun came up.
+At 4 AM on March 31, 2026, I woke up to my phone blowing up with notifications. The Orange Code source had been exposed, and the entire dev community was in a frenzy. My girlfriend in Korea was genuinely worried I might face legal action from the original authors just for having the code on my machine — so I did what any engineer would do under pressure: I sat down, ported the core features to Python from scratch, and pushed it before the sun came up.
 
 The whole thing was orchestrated end-to-end using [oh-my-codex (OmX)](https://github.com/Yeachan-Heo/oh-my-codex) by [@bellman_ych](https://x.com/bellman_ych) — a workflow layer built on top of OpenAI's Codex ([@OpenAIDevs](https://x.com/OpenAIDevs)). I used `$team` mode for parallel code review and `$ralph` mode for persistent execution loops with architect-level verification. The entire porting session — from reading the original harness structure to producing a working Python tree with tests — was driven through OmX orchestration.
 
-The result is a clean-room Python rewrite that captures the architectural patterns of Claw Code's agent harness without copying any proprietary source. I'm now actively collaborating with [@bellman_ych](https://x.com/bellman_ych) — the creator of OmX himself — to push this further. The basic Python foundation is already in place and functional, but we're just getting started. **Stay tuned — a much more capable version is on the way.**
+The result is a clean-room Python rewrite that captures the architectural patterns of Orange Code's agent harness without copying any proprietary source. I'm now actively collaborating with [@bellman_ych](https://x.com/bellman_ych) — the creator of OmX himself — to push this further. The basic Python foundation is already in place and functional, but we're just getting started. **Stay tuned — a much more capable version is on the way.**
 
 The Rust port was developed with both [oh-my-codex (OmX)](https://github.com/Yeachan-Heo/oh-my-codex) and [oh-my-opencode (OmO)](https://github.com/code-yeongyu/oh-my-openagent): OmX drove scaffolding, orchestration, and architecture direction, while OmO was used for later implementation acceleration and verification support.
 
-https://github.com/instructkr/claw-code
+https://github.com/instructkr/orange-code
 
 ![Tweet screenshot](assets/tweet-screenshot.png)
 
-## The Creators Featured in Wall Street Journal For Avid Claw Code Fans
+## The Creators Featured in Wall Street Journal For Avid Orange Code Fans
 
 I've been deeply interested in **harness engineering** — studying how agent systems wire tools, orchestrate tasks, and manage runtime context. This isn't a sudden thing. The Wall Street Journal featured my work earlier this month, documenting how I've been one of the most active power users exploring these systems:
 
-> AI startup worker Sigrid Jin, who attended the Seoul dinner, single-handedly used 25 billion of Claw Code tokens last year. At the time, usage limits were looser, allowing early enthusiasts to reach tens of billions of tokens at a very low cost.
+> AI startup worker Sigrid Jin, who attended the Seoul dinner, single-handedly used 25 billion of Orange Code tokens last year. At the time, usage limits were looser, allowing early enthusiasts to reach tens of billions of tokens at a very low cost.
 >
-> Despite his countless hours with Claw Code, Jin isn't faithful to any one AI lab. The tools available have different strengths and weaknesses, he said. Codex is better at reasoning, while Claw Code generates cleaner, more shareable code.
+> Despite his countless hours with Orange Code, Jin isn't faithful to any one AI lab. The tools available have different strengths and weaknesses, he said. Codex is better at reasoning, while Orange Code generates cleaner, more shareable code.
 >
-> Jin flew to San Francisco in February for Claw Code's first birthday party, where attendees waited in line to compare notes with Cherny. The crowd included a practicing cardiologist from Belgium who had built an app to help patients navigate care, and a California lawyer who made a tool for automating building permit approvals using Claw Code.
+> Jin flew to San Francisco in February for Orange Code's first birthday party, where attendees waited in line to compare notes with Cherny. The crowd included a practicing cardiologist from Belgium who had built an app to help patients navigate care, and a California lawyer who made a tool for automating building permit approvals using Orange Code.
 >
 > "It was basically like a sharing party," Jin said. "There were lawyers, there were doctors, there were dentists. They did not have software engineering backgrounds."
 >
@@ -161,10 +161,10 @@ This repository now focuses on Python porting work instead.
 │   ├── query_engine.py
 │   ├── task.py
 │   └── tools.py
-├── rust/                               # Rust port (claw CLI)
+├── rust/                               # Rust port (orange CLI)
 │   ├── crates/api/                     # API client + streaming
 │   ├── crates/runtime/                 # Session, tools, MCP, config
-│   ├── crates/claw-cli/               # Interactive CLI binary
+│   ├── crates/orange-cli/               # Interactive CLI binary
 │   ├── crates/plugins/                 # Plugin system
 │   ├── crates/commands/                # Slash commands
 │   ├── crates/server/                  # HTTP/SSE server (axum)
@@ -222,7 +222,7 @@ python3 -m unittest discover -s tests -v
 ├── rust/                               # Rust 核心实现 (CLI 工具)
 │   ├── crates/api/                     # API 客户端与流式处理
 │   ├── crates/runtime/                 # 会话、工具、MCP、配置
-│   ├── crates/claw-cli/                # 交互式 CLI 终端
+│   ├── crates/orange-cli/                # 交互式 CLI 终端
 │   ├── crates/plugins/                 # 插件系统
 │   ├── crates/commands/                # 斜杠命令实现
 │   ├── crates/server/                  # HTTP/SSE 服务器 (axum)
@@ -235,7 +235,7 @@ python3 -m unittest discover -s tests -v
 
 ## 免责声明
 
-- 本项目为基于 [Claw Code](https://github.com/instructkr/claw-code) 源码的二次开发。
+- 本项目为基于 [Orange Code](https://github.com/instructkr/orange-code) 源码的二次开发。
 - 本项目纯粹出于技术研究、个人学习与工具定制目的而创建和维护，不隶属于原作者团队，也不声称对原始代码的完全所有权。
 
 <!-- Upstream/English Version Below -->
@@ -297,5 +297,5 @@ See the chart at the top of this README.
 
 ## Ownership / Affiliation Disclaimer
 
-- This repository does **not** claim ownership of the original Claw Code source material.
+- This repository does **not** claim ownership of the original Orange Code source material.
 - This repository is **not affiliated with, endorsed by, or maintained by the original authors**.

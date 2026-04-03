@@ -308,7 +308,7 @@ mod tests {
     #[test]
     fn allows_exit_code_zero_and_captures_stdout() {
         // Avoid `sh -lc` noise by writing the script directly and using it
-        let temp_dir = std::env::temp_dir().join("claw_runtime_hook_test_1");
+        let temp_dir = std::env::temp_dir().join("orange_runtime_hook_test_1");
         std::fs::create_dir_all(&temp_dir).unwrap();
         let script_path = temp_dir.join("ok.sh");
         std::fs::write(&script_path, "#!/bin/sh\necho 'pre ok'\nexit 0").unwrap();
@@ -334,7 +334,7 @@ mod tests {
 
     #[test]
     fn denies_exit_code_two() {
-        let temp_dir = std::env::temp_dir().join("claw_runtime_hook_test_2");
+        let temp_dir = std::env::temp_dir().join("orange_runtime_hook_test_2");
         std::fs::create_dir_all(&temp_dir).unwrap();
         let script_path = temp_dir.join("deny.sh");
         std::fs::write(&script_path, "#!/bin/sh\necho 'blocked by hook'\nexit 2").unwrap();
@@ -360,7 +360,7 @@ mod tests {
 
     #[test]
     fn warns_for_other_non_zero_statuses() {
-        let temp_dir = std::env::temp_dir().join("claw_runtime_hook_test_3");
+        let temp_dir = std::env::temp_dir().join("orange_runtime_hook_test_3");
         std::fs::create_dir_all(&temp_dir).unwrap();
         let script_path = temp_dir.join("warn.sh");
         std::fs::write(&script_path, "#!/bin/sh\necho 'warning hook'\nexit 1").unwrap();

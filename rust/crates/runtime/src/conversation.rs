@@ -577,7 +577,7 @@ mod tests {
 
     #[test]
     fn denies_tool_use_when_pre_tool_hook_blocks() {
-        let temp_dir = std::env::temp_dir().join("claw_runtime_hook_test_4");
+        let temp_dir = std::env::temp_dir().join("orange_runtime_hook_test_4");
         std::fs::create_dir_all(&temp_dir).unwrap();
         let script_path = temp_dir.join("deny.sh");
         std::fs::write(&script_path, "#!/bin/sh\necho 'blocked by hook'\nexit 2").unwrap();
@@ -650,7 +650,7 @@ mod tests {
 
     #[test]
     fn appends_post_tool_hook_feedback_to_tool_result() {
-        let temp_dir = std::env::temp_dir().join("claw_runtime_hook_test_5");
+        let temp_dir = std::env::temp_dir().join("orange_runtime_hook_test_5");
         std::fs::create_dir_all(&temp_dir).unwrap();
         let pre_script = temp_dir.join("pre.sh");
         let post_script = temp_dir.join("post.sh");

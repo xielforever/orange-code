@@ -1,6 +1,6 @@
 # Tasks
 - [x] Task 1: 扫描并分析仓库核心目录结构
-  - [x] SubTask 1.1: 使用 search sub-agent 深入分析 `rust/` 目录下的核心 crates（如 `api`, `runtime`, `tools`, `claw-cli` 等）的具体作用和核心实现。
+  - [x] SubTask 1.1: 使用 search sub-agent 深入分析 `rust/` 目录下的核心 crates（如 `api`, `runtime`, `tools`, `orange-cli` 等）的具体作用和核心实现。
   - [x] SubTask 1.2: 使用 search sub-agent 分析 `src/` 目录下 Python 原型代码的作用、核心类及结构。
 - [x] Task 2: 梳理模块关联性与数据流
   - [x] SubTask 2.1: 分析 Rust 工作区内部各个 crate 之间的依赖关系（基于 `Cargo.toml` 梳理）。

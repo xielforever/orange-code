@@ -13,7 +13,7 @@
 
 # Contributing
 
-Thanks for contributing to Claw Code.
+Thanks for contributing to Orange Code.
 
 ## Development setup
 

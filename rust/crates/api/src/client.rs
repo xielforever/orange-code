@@ -1,5 +1,5 @@
 use crate::error::ApiError;
-use crate::providers::claw_provider::{self, AuthSource, ClawApiClient};
+use crate::providers::orange_provider::{self, AuthSource, OrangeApiClient};
 use crate::providers::openai_compat::{self, OpenAiCompatClient, OpenAiCompatConfig};
 use crate::providers::{self, Provider, ProviderKind};
 use crate::types::{MessageRequest, MessageResponse, StreamEvent};
@@ -20,7 +20,7 @@ async fn stream_via_provider<P: Provider>(
 
 #[derive(Debug, Clone)]
 pub enum ProviderClient {
-    ClawApi(ClawApiClient),
+    OrangeApi(OrangeApiClient),
     Xai(OpenAiCompatClient),
     OpenAi(OpenAiCompatClient),
     DeepSeek(OpenAiCompatClient),
@@ -37,9 +37,9 @@ impl ProviderClient {
     ) -> Result<Self, ApiError> {
         let resolved_model = providers::resolve_model_alias(model);
         match providers::detect_provider_kind(&resolved_model) {
-            ProviderKind::ClawApi => Ok(Self::ClawApi(match default_auth {
-                Some(auth) => ClawApiClient::from_auth(auth).with_base_url(read_base_url()),
-                None => ClawApiClient::from_env()?,
+            ProviderKind::OrangeApi => Ok(Self::OrangeApi(match default_auth {
+                Some(auth) => OrangeApiClient::from_auth(auth).with_base_url(read_base_url()),
+                None => OrangeApiClient::from_env()?,
             })),
             ProviderKind::Xai => Ok(Self::Xai(OpenAiCompatClient::from_env(
                 OpenAiCompatConfig::xai(),
@@ -56,7 +56,7 @@ impl ProviderClient {
     #[must_use]
     pub const fn provider_kind(&self) -> ProviderKind {
         match self {
-            Self::ClawApi(_) => ProviderKind::ClawApi,
+            Self::OrangeApi(_) => ProviderKind::OrangeApi,
             Self::Xai(_) => ProviderKind::Xai,
             Self::OpenAi(_) => ProviderKind::OpenAi,
             Self::DeepSeek(_) => ProviderKind::DeepSeek,
@@ -68,7 +68,7 @@ impl ProviderClient {
         request: &MessageRequest,
     ) -> Result<MessageResponse, ApiError> {
         match self {
-            Self::ClawApi(client) => send_via_provider(client, request).await,
+            Self::OrangeApi(client) => send_via_provider(client, request).await,
             Self::Xai(client) | Self::OpenAi(client) | Self::DeepSeek(client) => {
                 send_via_provider(client, request).await
             }
@@ -80,9 +80,9 @@ impl ProviderClient {
         request: &MessageRequest,
     ) -> Result<MessageStream, ApiError> {
         match self {
-            Self::ClawApi(client) => stream_via_provider(client, request)
+            Self::OrangeApi(client) => stream_via_provider(client, request)
                 .await
-                .map(MessageStream::ClawApi),
+                .map(MessageStream::OrangeApi),
             Self::Xai(client) | Self::OpenAi(client) | Self::DeepSeek(client) => {
                 stream_via_provider(client, request)
                     .await
@@ -94,7 +94,7 @@ impl ProviderClient {
 
 #[derive(Debug)]
 pub enum MessageStream {
-    ClawApi(claw_provider::MessageStream),
+    OrangeApi(orange_provider::MessageStream),
     OpenAiCompat(openai_compat::MessageStream),
 }
 
@@ -102,25 +102,25 @@ impl MessageStream {
     #[must_use]
     pub fn request_id(&self) -> Option<&str> {
         match self {
-            Self::ClawApi(stream) => stream.request_id(),
+            Self::OrangeApi(stream) => stream.request_id(),
             Self::OpenAiCompat(stream) => stream.request_id(),
         }
     }
 
     pub async fn next_event(&mut self) -> Result<Option<StreamEvent>, ApiError> {
         match self {
-            Self::ClawApi(stream) => stream.next_event().await,
+            Self::OrangeApi(stream) => stream.next_event().await,
             Self::OpenAiCompat(stream) => stream.next_event().await,
         }
     }
 }
 
-pub use claw_provider::{
+pub use orange_provider::{
     oauth_token_is_expired, resolve_saved_oauth_token, resolve_startup_auth_source, OAuthTokenSet,
 };
 #[must_use]
 pub fn read_base_url() -> String {
-    claw_provider::read_base_url()
+    orange_provider::read_base_url()
 }
 
 #[must_use]
@@ -144,7 +144,7 @@ mod tests {
         assert_eq!(detect_provider_kind("grok-3"), ProviderKind::Xai);
         assert_eq!(
             detect_provider_kind("claude-sonnet-4-6"),
-            ProviderKind::ClawApi
+            ProviderKind::OrangeApi
         );
     }
 }

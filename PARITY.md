@@ -1,6 +1,6 @@
 # 功能对齐差异分析 (PARITY GAP ANALYSIS)
 
-范围：仅对位于 `/home/bellman/Workspace/claw-code/src/` 的原始 TypeScript 源码与 `rust/crates/` 下的 Rust 移植版本进行只读对比。
+范围：仅对位于 `/home/bellman/Workspace/orange-code/src/` 的原始 TypeScript 源码与 `rust/crates/` 下的 Rust 移植版本进行只读对比。
 
 方法：仅比较功能边界、注册表、入口点以及运行时管道。未复制任何 TypeScript 源码。
 
@@ -11,7 +11,7 @@ Rust 移植版本在以下方面具有良好的基础：
 - 本地对话/会话状态
 - 核心工具循环
 - MCP stdio/启动支持
-- ORANGE.md (原 CLAW.md) 的发现机制
+- ORANGE.md (原 ORANGE.md) 的发现机制
 - 一小套但可用性强的内置工具集
 
 但它与 TypeScript CLI **尚未达到功能对齐 (feature-parity)**。
@@ -59,7 +59,7 @@ Rust 移植版本在以下方面具有良好的基础：
 ### Rust 现状
 证据：
 - 钩子配置在 `rust/crates/runtime/src/config.rs` 中解析并合并。
-- 钩子配置可以通过 `rust/crates/commands/src/lib.rs` 和 `rust/crates/claw-cli/src/main.rs` 中的 Rust 配置报告进行检查。
+- 钩子配置可以通过 `rust/crates/commands/src/lib.rs` 和 `rust/crates/orange-cli/src/main.rs` 中的 Rust 配置报告进行检查。
 - 提示引导在 `rust/crates/runtime/src/prompt.rs` 中提到了钩子。
 
 ### Rust 中缺失或损坏的部分
@@ -106,7 +106,7 @@ Rust 移植版本在以下方面具有良好的基础：
 证据：
 - `rust/crates/tools/src/lib.rs` 中的 `Skill` 工具解析并读取本地 `SKILL.md` 文件。
 - ORANGE.md 发现机制在 `rust/crates/runtime/src/prompt.rs` 中实现。
-- Rust 通过 `rust/crates/commands/src/lib.rs` 和 `rust/crates/claw-cli/src/main.rs` 支持 `/memory` 和 `/init`。
+- Rust 通过 `rust/crates/commands/src/lib.rs` 和 `rust/crates/orange-cli/src/main.rs` 支持 `/memory` 和 `/init`。
 
 ### Rust 中缺失或损坏的部分
 - 没有捆绑技能注册表等效项。
@@ -131,7 +131,7 @@ Rust 移植版本在以下方面具有良好的基础：
 证据：
 - 共享斜杠命令注册表位于 `rust/crates/commands/src/lib.rs`。
 - Rust 斜杠命令当前覆盖了 `help`、`status`、`compact`、`model`、`permissions`、`clear`、`cost`、`resume`、`config`、`memory`、`init`、`diff`、`version`、`export`、`session`。
-- 主要的 CLI/repl/提示处理位于 `rust/crates/claw-cli/src/main.rs`。
+- 主要的 CLI/repl/提示处理位于 `rust/crates/orange-cli/src/main.rs`。
 
 ### Rust 中缺失或损坏的部分
 - 缺少主要的 TS 命令家族：`/agents`、`/hooks`、`/mcp`、`/plugin`、`/skills`、`/plan`、`/review`、`/tasks` 等等。
@@ -154,7 +154,7 @@ Rust 移植版本在以下方面具有良好的基础：
 ### Rust 现状
 证据：
 - 核心循环位于 `rust/crates/runtime/src/conversation.rs`。
-- 流/工具事件转换位于 `rust/crates/claw-cli/src/main.rs`。
+- 流/工具事件转换位于 `rust/crates/orange-cli/src/main.rs`。
 - 会话持久化位于 `rust/crates/runtime/src/session.rs`。
 
 ### Rust 中缺失或损坏的部分
@@ -199,13 +199,13 @@ Rust 移植版本在以下方面具有良好的基础：
 
 ### 已修复
 - **启用了提示模式工具**
-  - `rust/crates/claw-cli/src/main.rs` 现在使用 `LiveCli::new(model, true, ...)` 构建提示模式。
+  - `rust/crates/orange-cli/src/main.rs` 现在使用 `LiveCli::new(model, true, ...)` 构建提示模式。
 - **默认权限模式 = DangerFullAccess**
-  - 运行时默认现在在 `rust/crates/claw-cli/src/main.rs` 中解析为 `DangerFullAccess`。
-  - Clap 默认也使用 `rust/crates/claw-cli/src/args.rs` 中的 `DangerFullAccess`。
-  - Init 模板在 `rust/crates/claw-cli/src/init.rs` 中写入 `dontAsk`。
+  - 运行时默认现在在 `rust/crates/orange-cli/src/main.rs` 中解析为 `DangerFullAccess`。
+  - Clap 默认也使用 `rust/crates/orange-cli/src/args.rs` 中的 `DangerFullAccess`。
+  - Init 模板在 `rust/crates/orange-cli/src/init.rs` 中写入 `dontAsk`。
 - **流式 `{}` 工具输入前缀 bug**
-  - `rust/crates/claw-cli/src/main.rs` 现在仅针对流式工具输入剥离初始的空对象，同时保留非流式响应中合法的 `{}`。
+  - `rust/crates/orange-cli/src/main.rs` 现在仅针对流式工具输入剥离初始的空对象，同时保留非流式响应中合法的 `{}`。
 - **无限制的 max_iterations**
   - 已在 `rust/crates/runtime/src/conversation.rs` 中验证为 `usize::MAX`。
 
@@ -217,7 +217,7 @@ Rust 移植版本在以下方面具有良好的基础：
 
 # PARITY GAP ANALYSIS
 
-Scope: read-only comparison between the original TypeScript source at `/home/bellman/Workspace/claw-code/src/` and the Rust port under `rust/crates/`.
+Scope: read-only comparison between the original TypeScript source at `/home/bellman/Workspace/orange-code/src/` and the Rust port under `rust/crates/`.
 
 Method: compared feature surfaces, registries, entrypoints, and runtime plumbing only. No TypeScript source was copied.
 
@@ -228,7 +228,7 @@ The Rust port has a good foundation for:
 - local conversation/session state
 - a core tool loop
 - MCP stdio/bootstrap support
-- CLAW.md discovery
+- ORANGE.md discovery
 - a small but usable built-in tool set
 
 It is **not feature-parity** with the TypeScript CLI.
@@ -276,7 +276,7 @@ Evidence:
 ### Rust exists
 Evidence:
 - Hook config is parsed and merged in `rust/crates/runtime/src/config.rs`.
-- Hook config can be inspected via Rust config reporting in `rust/crates/commands/src/lib.rs` and `rust/crates/claw-cli/src/main.rs`.
+- Hook config can be inspected via Rust config reporting in `rust/crates/commands/src/lib.rs` and `rust/crates/orange-cli/src/main.rs`.
 - Prompt guidance mentions hooks in `rust/crates/runtime/src/prompt.rs`.
 
 ### Missing or broken in Rust
@@ -311,7 +311,7 @@ Evidence:
 
 ---
 
-## skills/ and CLAW.md discovery
+## skills/ and ORANGE.md discovery
 
 ### TS exists
 Evidence:
@@ -322,8 +322,8 @@ Evidence:
 ### Rust exists
 Evidence:
 - `Skill` tool in `rust/crates/tools/src/lib.rs` resolves and reads local `SKILL.md` files.
-- CLAW.md discovery is implemented in `rust/crates/runtime/src/prompt.rs`.
-- Rust supports `/memory` and `/init` via `rust/crates/commands/src/lib.rs` and `rust/crates/claw-cli/src/main.rs`.
+- ORANGE.md discovery is implemented in `rust/crates/runtime/src/prompt.rs`.
+- Rust supports `/memory` and `/init` via `rust/crates/commands/src/lib.rs` and `rust/crates/orange-cli/src/main.rs`.
 
 ### Missing or broken in Rust
 - No bundled skill registry equivalent.
@@ -348,7 +348,7 @@ Evidence:
 Evidence:
 - Shared slash command registry in `rust/crates/commands/src/lib.rs`.
 - Rust slash commands currently cover `help`, `status`, `compact`, `model`, `permissions`, `clear`, `cost`, `resume`, `config`, `memory`, `init`, `diff`, `version`, `export`, `session`.
-- Main CLI/repl/prompt handling lives in `rust/crates/claw-cli/src/main.rs`.
+- Main CLI/repl/prompt handling lives in `rust/crates/orange-cli/src/main.rs`.
 
 ### Missing or broken in Rust
 - Missing major TS command families: `/agents`, `/hooks`, `/mcp`, `/plugin`, `/skills`, `/plan`, `/review`, `/tasks`, and many others.
@@ -371,7 +371,7 @@ Evidence:
 ### Rust exists
 Evidence:
 - Core loop in `rust/crates/runtime/src/conversation.rs`.
-- Stream/tool event translation in `rust/crates/claw-cli/src/main.rs`.
+- Stream/tool event translation in `rust/crates/orange-cli/src/main.rs`.
 - Session persistence in `rust/crates/runtime/src/session.rs`.
 
 ### Missing or broken in Rust
@@ -416,13 +416,13 @@ Evidence:
 
 ### Fixed
 - **Prompt mode tools enabled**
-  - `rust/crates/claw-cli/src/main.rs` now constructs prompt mode with `LiveCli::new(model, true, ...)`.
+  - `rust/crates/orange-cli/src/main.rs` now constructs prompt mode with `LiveCli::new(model, true, ...)`.
 - **Default permission mode = DangerFullAccess**
-  - Runtime default now resolves to `DangerFullAccess` in `rust/crates/claw-cli/src/main.rs`.
-  - Clap default also uses `DangerFullAccess` in `rust/crates/claw-cli/src/args.rs`.
-  - Init template writes `dontAsk` in `rust/crates/claw-cli/src/init.rs`.
+  - Runtime default now resolves to `DangerFullAccess` in `rust/crates/orange-cli/src/main.rs`.
+  - Clap default also uses `DangerFullAccess` in `rust/crates/orange-cli/src/args.rs`.
+  - Init template writes `dontAsk` in `rust/crates/orange-cli/src/init.rs`.
 - **Streaming `{}` tool-input prefix bug**
-  - `rust/crates/claw-cli/src/main.rs` now strips the initial empty object only for streaming tool input, while preserving legitimate `{}` in non-stream responses.
+  - `rust/crates/orange-cli/src/main.rs` now strips the initial empty object only for streaming tool input, while preserving legitimate `{}` in non-stream responses.
 - **Unlimited max_iterations**
   - Verified at `rust/crates/runtime/src/conversation.rs` with `usize::MAX`.
 
