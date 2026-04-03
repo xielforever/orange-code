@@ -1,17 +1,19 @@
 # Orange Code
 
 <p align="center">
-  <strong>基于 Rust 和 Python 的本地 AI 代码助手个人项目</strong>
+  <strong>基于 Rust 和 Python 的本地 AI 代码助手个人二次开发项目</strong>
 </p>
 
 > [!IMPORTANT]
-> **Rust 移植版本**已合并至主分支。Rust 实现旨在提供更快、内存更安全的代理运行环境。本项目由最初的 Claw Code 重构而来，现已作为个人项目 **Orange Code** 独立维护和发展。
+> **版本:** v1.0.0
+> 
+> **项目来源说明:** 本项目基于开源项目 [Claw Code](https://github.com/instructkr/claw-code) 的架构进行二次开发与重构。Claw Code 本身受 Claude Code 启发。在此特别感谢原作者的开源贡献。本项目现作为个人工具 **Orange Code** 独立维护，用于探索 Agent 框架设计、工具编排和上下文管理。
 
 ---
 
 ## 核心特性
 
-Orange Code 是一个基于安全 Rust 实现的本地代码助手 CLI 工具。它受 Claude Code 启发，旨在提供强大的本地代理（Agent）体验，但它是一个完全重新实现的版本。
+Orange Code 是一个基于安全 Rust 实现的本地代码助手 CLI 工具，旨在提供强大的本地代理（Agent）体验。
 
 当前项目同时包含 Python 原型版本和 Rust 高性能版本：
 
@@ -37,25 +39,13 @@ cargo build --release
 
 ### Python 原型工作区 (`src/` 目录)
 
-项目根目录的 `src/` 和 `tests/` 包含了早期的 Python 移植原型。它实现了核心架构模式的验证，目前作为参考和辅助测试存在：
-
-- **`port_manifest.py`** — Python 工作区结构摘要
-- **`models.py`** — 子系统、模块和后台状态的数据类
-- **`commands.py`** & **`tools.py`** — Python 侧的命令和工具元数据
-- **`query_engine.py`** — 渲染 Python 移植进度的摘要引擎
-- **`main.py`** — CLI 入口
+项目根目录的 `src/` 和 `tests/` 包含了早期的 Python 移植原型。它实现了核心架构模式的验证，目前作为参考和辅助测试存在。
 
 **运行 Python 版本验证:**
 
 ```bash
 python3 -m unittest discover -s tests -v
 ```
-
-## 项目背景
-
-Orange Code 起源于一次对泄漏的 Claw Code 代理框架的学习与重构。为了避免法律和道德问题，我没有保留任何原始代码，而是通过 [oh-my-codex (OmX)](https://github.com/Yeachan-Heo/oh-my-codex) 辅助，从零开始用 Python 实现了其架构模式。
-
-随着项目的演进，为了追求更高的性能和内存安全性，项目重心转移到了 Rust 的实现上。现在，**Orange Code** 完全作为我的个人开源项目进行维护，专注于探索 Agent 框架设计、工具编排和上下文管理。
 
 ## 目录结构
 
@@ -79,5 +69,5 @@ Orange Code 起源于一次对泄漏的 Claw Code 代理框架的学习与重构
 
 ## 免责声明
 
-- 本存储库**不**声称对原始 Claw Code 源代码拥有任何所有权。
-- 本存储库**不**隶属于原始作者，也未得到其认可或由其维护。本项目纯粹出于技术研究与个人学习目的而创建。
+- 本项目为基于 [Claw Code](https://github.com/instructkr/claw-code) 源码的二次开发。
+- 本项目纯粹出于技术研究、个人学习与工具定制目的而创建和维护，不隶属于原作者团队，也不声称对原始代码的完全所有权。
