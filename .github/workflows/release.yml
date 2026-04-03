@@ -47,6 +47,14 @@ jobs:
         run: npm ci
         working-directory: ./client
 
+      - name: Sync package version with git tag
+        if: startsWith(github.ref, 'refs/tags/v')
+        shell: bash
+        run: |
+          VERSION=${GITHUB_REF_NAME#v}
+          npm version $VERSION --no-git-tag-version
+        working-directory: ./client
+
       - name: Build React and Electron App
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
