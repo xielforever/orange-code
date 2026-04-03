@@ -1,9 +1,38 @@
 import { app, BrowserWindow } from 'electron';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
+import { spawn, ChildProcess } from 'child_process';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+let rustProcess: ChildProcess | null = null;
+const RUST_PORT = 34567;
+
+function startRustServer() {
+  const binaryPath = app.isPackaged 
+    ? path.join(process.resourcesPath, 'bin', 'orange')
+    : path.join(__dirname, '../../rust/target/release/orange');
+
+  try {
+    rustProcess = spawn(binaryPath, ['--server', '--port', RUST_PORT.toString()]);
+    
+    rustProcess.stdout?.on('data', (data) => {
+      console.log(`[Rust]: ${data}`);
+    });
+    
+    rustProcess.stderr?.on('data', (data) => {
+      console.error(`[Rust Error]: ${data}`);
+    });
+    
+    rustProcess.on('close', (code) => {
+      console.log(`Rust process exited with code ${code}`);
+      rustProcess = null;
+    });
+  } catch (e) {
+    console.error('Failed to start rust server:', e);
+  }
+}
 
 function createWindow() {
   const mainWindow = new BrowserWindow({
@@ -26,7 +55,10 @@ function createWindow() {
 }
 
 app.whenReady().then(() => {
-  createWindow();
+  startRustServer();
+  setTimeout(() => {
+    createWindow();
+  }, 1000);
 
   app.on('activate', function () {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
@@ -34,5 +66,14 @@ app.whenReady().then(() => {
 });
 
 app.on('window-all-closed', function () {
+  if (rustProcess) {
+    rustProcess.kill('SIGTERM');
+  }
   if (process.platform !== 'darwin') app.quit();
+});
+
+app.on('before-quit', () => {
+  if (rustProcess) {
+    rustProcess.kill('SIGTERM');
+  }
 });
