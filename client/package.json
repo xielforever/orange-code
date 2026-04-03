@@ -23,8 +23,8 @@
     },
     "extraResources": [
       {
-        "from": "../rust/target/release/orange",
-        "to": "bin/orange",
+        "from": "../rust/target/release/orange${ext}",
+        "to": "bin/orange${ext}",
         "filter": [
           "**/*"
         ]

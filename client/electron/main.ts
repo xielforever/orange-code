@@ -10,9 +10,12 @@ let rustProcess: ChildProcess | null = null;
 const RUST_PORT = 34567;
 
 function startRustServer() {
+  const isWindows = process.platform === 'win32';
+  const binaryName = isWindows ? 'orange.exe' : 'orange';
+
   const binaryPath = app.isPackaged 
-    ? path.join(process.resourcesPath, 'bin', 'orange')
-    : path.join(__dirname, '../../rust/target/release/orange');
+    ? path.join(process.resourcesPath, 'bin', binaryName)
+    : path.join(__dirname, '../../rust/target/release', binaryName);
 
   try {
     rustProcess = spawn(binaryPath, ['--server', '--port', RUST_PORT.toString()]);
