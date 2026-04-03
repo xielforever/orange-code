@@ -1,6 +1,7 @@
 mod init;
 mod input;
 mod render;
+mod server;
 
 use std::collections::BTreeSet;
 use std::env;
@@ -105,6 +106,7 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
         CliAction::Login => run_login()?,
         CliAction::Logout => run_logout()?,
         CliAction::Init => run_init()?,
+        CliAction::Server { port } => server::run_server(port)?,
         CliAction::Repl {
             model,
             allowed_tools,
@@ -144,6 +146,9 @@ enum CliAction {
     Login,
     Logout,
     Init,
+    Server {
+        port: u16,
+    },
     Repl {
         model: String,
         allowed_tools: Option<AllowedToolSet>,
@@ -176,6 +181,8 @@ fn parse_args(args: &[String]) -> Result<CliAction, String> {
     let mut model = DEFAULT_MODEL.to_string();
     let mut output_format = CliOutputFormat::Text;
     let mut permission_mode = default_permission_mode();
+    let mut is_server = false;
+    let mut server_port = 34567;
     let mut wants_version = false;
     let mut allowed_tool_values = Vec::new();
     let mut rest = Vec::new();
@@ -183,6 +190,21 @@ fn parse_args(args: &[String]) -> Result<CliAction, String> {
 
     while index < args.len() {
         match args[index].as_str() {
+            "--server" => {
+                is_server = true;
+                index += 1;
+            }
+            "--port" => {
+                let value = args
+                    .get(index + 1)
+                    .ok_or_else(|| "missing value for --port".to_string())?;
+                server_port = value.parse::<u16>().map_err(|_| "invalid port number".to_string())?;
+                index += 2;
+            }
+            flag if flag.starts_with("--port=") => {
+                server_port = flag[7..].parse::<u16>().map_err(|_| "invalid port number".to_string())?;
+                index += 1;
+            }
             "--version" | "-V" => {
                 wants_version = true;
                 index += 1;
@@ -267,6 +289,10 @@ fn parse_args(args: &[String]) -> Result<CliAction, String> {
 
     if wants_version {
         return Ok(CliAction::Version);
+    }
+
+    if is_server {
+        return Ok(CliAction::Server { port: server_port });
     }
 
     let allowed_tools = normalize_allowed_tools(&allowed_tool_values)?;
