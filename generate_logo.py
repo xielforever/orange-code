@@ -1,18 +1,19 @@
 from PIL import Image, ImageDraw, ImageFont
 import math
 
-def draw_syntactic_core_logo(filename):
+def draw_syntactic_core_logo(filename, transparent=False):
     # Canvas parameters
     width, height = 1000, 1000
     
     # Colors
-    bg_color = (11, 11, 12)        # Obsidian black
-    accent_color = (255, 107, 0)   # Luminous, searing orange
-    white_color = (248, 249, 250)  # Off-white for text
-    grey_color = (134, 142, 150)   # Muted grey for sub-elements
+    bg_color = (11, 11, 12, 255) if not transparent else (0, 0, 0, 0) # RGBA
+    cut_color = (11, 11, 12, 255) if not transparent else (0, 0, 0, 0) # The color used to cut shapes
+    accent_color = (255, 107, 0, 255)   # Luminous, searing orange
+    white_color = (248, 249, 250, 255)  # Off-white for text
+    grey_color = (134, 142, 150, 255)   # Muted grey for sub-elements
     
     # Create image and drawing context
-    img = Image.new("RGB", (width, height), bg_color)
+    img = Image.new("RGBA", (width, height), bg_color)
     draw = ImageDraw.Draw(img)
     
     center_x, center_y = width // 2, (height // 2) - 50
@@ -36,7 +37,7 @@ def draw_syntactic_core_logo(filename):
     inner_radius = 110
     draw.ellipse(
         [(center_x - inner_radius, center_y - inner_radius), (center_x + inner_radius, center_y + inner_radius)],
-        fill=bg_color, outline=None
+        fill=cut_color, outline=None
     )
     
     # Cut 2: The Terminal Caret (>) slicing through the ring
@@ -49,7 +50,7 @@ def draw_syntactic_core_logo(filename):
         (center_x + inner_radius + 40, center_y),      # Inner point
         (center_x + 10, center_y - inner_radius + 20)  # Inner top
     ]
-    draw.polygon(poly_cut, fill=bg_color)
+    draw.polygon(poly_cut, fill=cut_color)
     
     # Cut 3: A sharp horizontal slice to represent a cursor line '_'
     cursor_width = 140
@@ -57,7 +58,7 @@ def draw_syntactic_core_logo(filename):
     draw.rectangle(
         [(center_x - cursor_width//2, center_y + inner_radius + 20), 
          (center_x + cursor_width//2, center_y + inner_radius + 20 + cursor_height)],
-        fill=bg_color
+        fill=cut_color
     )
     
     # Refined Geometry: Adding a precise architectural dot (The "seed")
@@ -126,4 +127,7 @@ def draw_syntactic_core_logo(filename):
     img.save(filename, format="PNG")
 
 if __name__ == "__main__":
+    # Generate the standard solid background logo
     draw_syntactic_core_logo("/workspace/orange_code_logo.png")
+    # Generate the transparent background logo
+    draw_syntactic_core_logo("/workspace/orange_code_logo_transparent.png", transparent=True)
