@@ -9,6 +9,19 @@
 
 ## 构建
 
+<!-- Upstream/English Version Below -->
+
+# Contributing
+
+Thanks for contributing to Claw Code.
+
+## Development setup
+
+- Install the stable Rust toolchain.
+- Work from the repository root in this Rust workspace. If you started from the parent repo root, `cd rust/` first.
+
+## Build
+
 ```bash
 cargo build
 cargo build --release
@@ -17,6 +30,12 @@ cargo build --release
 ## 测试与验证
 
 在提交拉取请求 (Pull Request) 之前，请运行完整的 Rust 验证集：
+
+<!-- Upstream/English Version Below -->
+
+## Test and verify
+
+Run the full Rust verification set before you open a pull request:
 
 ```bash
 cargo fmt --all --check
@@ -41,3 +60,22 @@ cargo test --workspace
 - 解释修改动机、实现摘要以及您运行过的验证步骤。
 - 在请求审查之前，确保所有本地检查均已通过。
 - 如果审查反馈改变了代码行为，请重新运行相关的验证命令。
+
+<!-- Upstream/English Version Below -->
+
+If you change behavior, add or update the relevant tests in the same pull request.
+
+## Code style
+
+- Follow the existing patterns in the touched crate instead of introducing a new style.
+- Format code with `rustfmt`.
+- Keep `clippy` clean for the workspace targets you changed.
+- Prefer focused diffs over drive-by refactors.
+
+## Pull requests
+
+- Branch from `main`.
+- Keep each pull request scoped to one clear change.
+- Explain the motivation, the implementation summary, and the verification you ran.
+- Make sure local checks pass before requesting review.
+- If review feedback changes behavior, rerun the relevant verification commands.
