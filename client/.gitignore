@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+client/release/
+client/dist/
+client/dist-electron/
