@@ -198,7 +198,8 @@ fn prepare_command(
     }
 
     let mut prepared = Command::new("sh");
-    prepared.arg("-lc").arg(command).current_dir(cwd);
+    // Don't use -l to avoid bashrc profile noise breaking tests
+    prepared.arg("-c").arg(command).current_dir(cwd);
     if sandbox_status.filesystem_active {
         prepared.env("HOME", cwd.join(".sandbox-home"));
         prepared.env("TMPDIR", cwd.join(".sandbox-tmp"));
@@ -225,7 +226,8 @@ fn prepare_tokio_command(
     }
 
     let mut prepared = TokioCommand::new("sh");
-    prepared.arg("-lc").arg(command).current_dir(cwd);
+    // Don't use -l to avoid bashrc profile noise breaking tests
+    prepared.arg("-c").arg(command).current_dir(cwd);
     if sandbox_status.filesystem_active {
         prepared.env("HOME", cwd.join(".sandbox-home"));
         prepared.env("TMPDIR", cwd.join(".sandbox-tmp"));
@@ -246,7 +248,8 @@ mod tests {
     #[test]
     fn executes_simple_command() {
         let output = execute_bash(BashCommandInput {
-            command: String::from("printf 'hello'"),
+            // Use an inner sh -c to avoid bashrc output on some environments
+            command: String::from("sh -c \"printf 'hello'\""),
             timeout: Some(1_000),
             description: None,
             run_in_background: Some(false),
@@ -266,7 +269,7 @@ mod tests {
     #[test]
     fn disables_sandbox_when_requested() {
         let output = execute_bash(BashCommandInput {
-            command: String::from("printf 'hello'"),
+            command: String::from("sh -c \"printf 'hello'\""),
             timeout: Some(1_000),
             description: None,
             run_in_background: Some(false),

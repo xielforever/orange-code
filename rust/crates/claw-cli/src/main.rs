@@ -45,6 +45,8 @@ const DEFAULT_MODEL: &str = "claude-opus-4-6";
 fn max_tokens_for_model(model: &str) -> u32 {
     if model.contains("opus") {
         32_000
+    } else if model.starts_with("deepseek") {
+        8192
     } else {
         64_000
     }

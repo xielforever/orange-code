@@ -249,6 +249,8 @@ pub fn max_tokens_for_model(model: &str) -> u32 {
     let canonical = resolve_model_alias(model);
     if canonical.contains("opus") {
         32_000
+    } else if canonical.starts_with("deepseek") {
+        8192
     } else {
         64_000
     }

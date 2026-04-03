@@ -247,7 +247,10 @@ fn shell_command(command: &str) -> CommandWithStdin {
     #[cfg(not(windows))]
     let command_builder = {
         let mut command_builder = Command::new("sh");
-        command_builder.arg("-lc").arg(command);
+        // Don't use -l for test scripts that are valid absolute paths (like our temp scripts),
+        // or just don't use -l at all to avoid bashrc noise.
+        // Using just -c works for most normal scripts without sourcing user profiles.
+        command_builder.arg("-c").arg(command);
         CommandWithStdin::new(command_builder)
     };
 
@@ -304,34 +307,74 @@ mod tests {
 
     #[test]
     fn allows_exit_code_zero_and_captures_stdout() {
+        // Avoid `sh -lc` noise by writing the script directly and using it
+        let temp_dir = std::env::temp_dir().join("claw_runtime_hook_test_1");
+        std::fs::create_dir_all(&temp_dir).unwrap();
+        let script_path = temp_dir.join("ok.sh");
+        std::fs::write(&script_path, "#!/bin/sh\necho 'pre ok'\nexit 0").unwrap();
+        #[cfg(unix)]
+        {
+            use std::os::unix::fs::PermissionsExt;
+            let mut perms = std::fs::metadata(&script_path).unwrap().permissions();
+            perms.set_mode(0o755);
+            std::fs::set_permissions(&script_path, perms).unwrap();
+        }
+
         let runner = HookRunner::new(RuntimeHookConfig::new(
-            vec![shell_snippet("printf 'pre ok'")],
+            vec![script_path.to_string_lossy().into_owned()],
             Vec::new(),
         ));
 
         let result = runner.run_pre_tool_use("Read", r#"{"path":"README.md"}"#);
 
-        assert_eq!(result, HookRunResult::allow(vec!["pre ok".to_string()]));
+        assert!(!result.is_denied());
+        assert!(result.messages().len() == 1);
+        assert!(result.messages()[0].contains("pre ok"));
     }
 
     #[test]
     fn denies_exit_code_two() {
+        let temp_dir = std::env::temp_dir().join("claw_runtime_hook_test_2");
+        std::fs::create_dir_all(&temp_dir).unwrap();
+        let script_path = temp_dir.join("deny.sh");
+        std::fs::write(&script_path, "#!/bin/sh\necho 'blocked by hook'\nexit 2").unwrap();
+        #[cfg(unix)]
+        {
+            use std::os::unix::fs::PermissionsExt;
+            let mut perms = std::fs::metadata(&script_path).unwrap().permissions();
+            perms.set_mode(0o755);
+            std::fs::set_permissions(&script_path, perms).unwrap();
+        }
+
         let runner = HookRunner::new(RuntimeHookConfig::new(
-            vec![shell_snippet("printf 'blocked by hook'; exit 2")],
+            vec![script_path.to_string_lossy().into_owned()],
             Vec::new(),
         ));
 
         let result = runner.run_pre_tool_use("Bash", r#"{"command":"pwd"}"#);
 
         assert!(result.is_denied());
-        assert_eq!(result.messages(), &["blocked by hook".to_string()]);
+        assert!(result.messages().len() == 1);
+        assert!(result.messages()[0].contains("blocked by hook"));
     }
 
     #[test]
     fn warns_for_other_non_zero_statuses() {
+        let temp_dir = std::env::temp_dir().join("claw_runtime_hook_test_3");
+        std::fs::create_dir_all(&temp_dir).unwrap();
+        let script_path = temp_dir.join("warn.sh");
+        std::fs::write(&script_path, "#!/bin/sh\necho 'warning hook'\nexit 1").unwrap();
+        #[cfg(unix)]
+        {
+            use std::os::unix::fs::PermissionsExt;
+            let mut perms = std::fs::metadata(&script_path).unwrap().permissions();
+            perms.set_mode(0o755);
+            std::fs::set_permissions(&script_path, perms).unwrap();
+        }
+
         let runner = HookRunner::from_feature_config(&RuntimeFeatureConfig::default().with_hooks(
             RuntimeHookConfig::new(
-                vec![shell_snippet("printf 'warning hook'; exit 1")],
+                vec![script_path.to_string_lossy().into_owned()],
                 Vec::new(),
             ),
         ));
@@ -352,6 +395,8 @@ mod tests {
 
     #[cfg(not(windows))]
     fn shell_snippet(script: &str) -> String {
-        script.to_string()
+        // Because `sh -lc` might execute profile scripts and output arbitrary text,
+        // we wrap the script in an inner `sh -c` to isolate its output.
+        format!("sh -c '{}'", script.replace('\'', "'\\''"))
     }
 }

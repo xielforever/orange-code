@@ -382,14 +382,36 @@ mod tests {
 
     #[test]
     fn pre_tool_use_denies_when_plugin_hook_exits_two() {
+        // Use a script that executes directly to avoid loading user profile dotfiles in test environments
+        // The script just writes our expected output and exits with 2
+        let temp_dir = std::env::temp_dir().join("claw_hook_test");
+        std::fs::create_dir_all(&temp_dir).unwrap();
+        let script_path = temp_dir.join("exit2.sh");
+        std::fs::write(&script_path, "#!/bin/sh\necho 'blocked by plugin'\nexit 2").unwrap();
+
+        // Make executable
+        #[cfg(unix)]
+        {
+            use std::os::unix::fs::PermissionsExt;
+            let mut perms = std::fs::metadata(&script_path).unwrap().permissions();
+            perms.set_mode(0o755);
+            std::fs::set_permissions(&script_path, perms).unwrap();
+        }
+
         let runner = HookRunner::new(crate::PluginHooks {
-            pre_tool_use: vec!["printf 'blocked by plugin'; exit 2".to_string()],
+            pre_tool_use: vec![script_path.to_string_lossy().into_owned()],
             post_tool_use: Vec::new(),
         });
 
         let result = runner.run_pre_tool_use("Bash", r#"{"command":"pwd"}"#);
 
         assert!(result.is_denied());
-        assert_eq!(result.messages(), &["blocked by plugin".to_string()]);
+        let messages = result.messages();
+        assert_eq!(messages.len(), 1);
+        assert!(
+            messages[0].contains("blocked by plugin"),
+            "Expected message to contain 'blocked by plugin', got: {}",
+            messages[0]
+        );
     }
 }

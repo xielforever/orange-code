@@ -577,6 +577,18 @@ mod tests {
 
     #[test]
     fn denies_tool_use_when_pre_tool_hook_blocks() {
+        let temp_dir = std::env::temp_dir().join("claw_runtime_hook_test_4");
+        std::fs::create_dir_all(&temp_dir).unwrap();
+        let script_path = temp_dir.join("deny.sh");
+        std::fs::write(&script_path, "#!/bin/sh\necho 'blocked by hook'\nexit 2").unwrap();
+        #[cfg(unix)]
+        {
+            use std::os::unix::fs::PermissionsExt;
+            let mut perms = std::fs::metadata(&script_path).unwrap().permissions();
+            perms.set_mode(0o755);
+            std::fs::set_permissions(&script_path, perms).unwrap();
+        }
+
         struct SingleCallApiClient;
         impl ApiClient for SingleCallApiClient {
             fn stream(&mut self, request: ApiRequest) -> Result<Vec<AssistantEvent>, RuntimeError> {
@@ -610,7 +622,7 @@ mod tests {
             PermissionPolicy::new(PermissionMode::DangerFullAccess),
             vec!["system".to_string()],
             RuntimeFeatureConfig::default().with_hooks(RuntimeHookConfig::new(
-                vec![shell_snippet("printf 'blocked by hook'; exit 2")],
+                vec![script_path.to_string_lossy().into_owned()],
                 Vec::new(),
             )),
         );
@@ -638,6 +650,23 @@ mod tests {
 
     #[test]
     fn appends_post_tool_hook_feedback_to_tool_result() {
+        let temp_dir = std::env::temp_dir().join("claw_runtime_hook_test_5");
+        std::fs::create_dir_all(&temp_dir).unwrap();
+        let pre_script = temp_dir.join("pre.sh");
+        let post_script = temp_dir.join("post.sh");
+        std::fs::write(&pre_script, "#!/bin/sh\necho 'pre hook ran'\nexit 0").unwrap();
+        std::fs::write(&post_script, "#!/bin/sh\necho 'post hook ran'\nexit 0").unwrap();
+        #[cfg(unix)]
+        {
+            use std::os::unix::fs::PermissionsExt;
+            let mut perms = std::fs::metadata(&pre_script).unwrap().permissions();
+            perms.set_mode(0o755);
+            std::fs::set_permissions(&pre_script, perms).unwrap();
+            let mut perms2 = std::fs::metadata(&post_script).unwrap().permissions();
+            perms2.set_mode(0o755);
+            std::fs::set_permissions(&post_script, perms2).unwrap();
+        }
+
         struct TwoCallApiClient {
             calls: usize,
         }
@@ -676,8 +705,8 @@ mod tests {
             PermissionPolicy::new(PermissionMode::DangerFullAccess),
             vec!["system".to_string()],
             RuntimeFeatureConfig::default().with_hooks(RuntimeHookConfig::new(
-                vec![shell_snippet("printf 'pre hook ran'")],
-                vec![shell_snippet("printf 'post hook ran'")],
+                vec![pre_script.to_string_lossy().into_owned()],
+                vec![post_script.to_string_lossy().into_owned()],
             )),
         );
 
@@ -796,6 +825,8 @@ mod tests {
 
     #[cfg(not(windows))]
     fn shell_snippet(script: &str) -> String {
-        script.to_string()
+        // Because `sh -lc` might execute profile scripts and output arbitrary text,
+        // we wrap the script in an inner `sh -c` to isolate its output.
+        format!("sh -c '{}'", script.replace('\'', "'\\''"))
     }
 }
