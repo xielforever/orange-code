@@ -120,15 +120,7 @@ def draw_syntactic_core_logo(filename):
     draw.line([(width-m, height-m), (width-m, height-m-l)], fill=grey_color, width=2)
     
     # Micro-text labels
-    
-    text_right = "RUST_CORE"
-    try:
-        bbox_tr = draw.textbbox((0, 0), text_right, font=tiny_font)
-        tr_w = bbox_tr[2] - bbox_tr[0]
-    except AttributeError:
-        tr_w = tiny_font.getsize(text_right)[0] if hasattr(tiny_font, 'getsize') else len(text_right) * 8
-        
-    draw.text((width - m - 10 - tr_w, m + 10), text_right, fill=grey_color, font=tiny_font)
+    pass
 
     # Save output
     img.save(filename, format="PNG")
