@@ -131,7 +131,6 @@ def draw_syntactic_core_logo_python(filename):
     draw.line([(width-m, height-m), (width-m, height-m-l)], fill=grey_color, width=2)
     
     # Micro-text labels
-    draw.text((m + 10, m + 10), "V.0.x.x_LEGACY", fill=grey_color, font=tiny_font)
     
     text_right = "PY_SRC"
     try:

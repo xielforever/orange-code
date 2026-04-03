@@ -120,7 +120,6 @@ def draw_syntactic_core_logo(filename):
     draw.line([(width-m, height-m), (width-m, height-m-l)], fill=grey_color, width=2)
     
     # Micro-text labels
-    draw.text((m + 10, m + 10), "V.1.0.0", fill=grey_color, font=tiny_font)
     
     text_right = "RUST_CORE"
     try:
