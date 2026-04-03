@@ -367,6 +367,7 @@ fn resolve_model_alias(model: &str) -> &str {
         "opus" => "claude-opus-4-6",
         "sonnet" => "claude-sonnet-4-6",
         "haiku" => "claude-haiku-4-5-20251213",
+        "deepseek" => "deepseek-chat",
         _ => model,
     }
 }
