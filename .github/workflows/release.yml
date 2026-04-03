@@ -38,7 +38,7 @@ jobs:
 
       - name: Build Rust Backend
         run: cargo build --release
-        working-directory: ./
+        working-directory: ./rust
 
       - name: Install frontend dependencies
         run: npm ci
