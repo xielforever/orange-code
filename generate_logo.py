@@ -119,8 +119,8 @@ def draw_syntactic_core_logo(filename):
     draw.line([(width-m, height-m), (width-m-l, height-m)], fill=grey_color, width=2)
     draw.line([(width-m, height-m), (width-m, height-m-l)], fill=grey_color, width=2)
     
-    # Micro-text labels (Version tag only, rust tag removed)
-    draw.text((m + 10, m + 10), "V.1.0.0", fill=grey_color, font=tiny_font)
+    # Micro-text labels (Version tag removed)
+    pass
 
     # Save output
     img.save(filename, format="PNG")
