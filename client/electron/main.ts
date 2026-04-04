@@ -78,17 +78,52 @@ app.whenReady().then(() => {
   });
 });
 
-app.on('window-all-closed', function () {
+function cleanupRustProcess() {
   if (rustProcess) {
-    rustProcess.kill('SIGTERM');
+    console.log('Killing Rust process...');
+    try {
+      if (process.platform === 'win32') {
+        // Windows 上使用 taskkill 强制终止
+        spawn('taskkill', ['/F', '/T', '/PID', rustProcess.pid?.toString() || '']);
+      } else {
+        rustProcess.kill('SIGTERM');
+        // 给进程一点时间优雅退出，然后强制终止
+        setTimeout(() => {
+          if (rustProcess && !rustProcess.killed) {
+            rustProcess.kill('SIGKILL');
+          }
+        }, 2000);
+      }
+    } catch (e) {
+      console.error('Error killing Rust process:', e);
+    }
   }
+}
+
+app.on('window-all-closed', function () {
+  cleanupRustProcess();
   if (process.platform !== 'darwin') app.quit();
 });
 
-app.on('before-quit', () => {
-  if (rustProcess) {
-    rustProcess.kill('SIGTERM');
-  }
+app.on('before-quit', (e) => {
+  cleanupRustProcess();
+});
+
+// 监听进程信号，确保 Ctrl+C 时也能清理
+process.on('SIGINT', () => {
+  console.log('Received SIGINT, cleaning up...');
+  cleanupRustProcess();
+  process.exit(0);
+});
+
+process.on('SIGTERM', () => {
+  console.log('Received SIGTERM, cleaning up...');
+  cleanupRustProcess();
+  process.exit(0);
+});
+
+process.on('exit', () => {
+  cleanupRustProcess();
 });
 
 ipcMain.handle('select-folder', async () => {
