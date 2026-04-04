@@ -61,14 +61,23 @@ jobs:
         run: npm run build
         working-directory: ./client
 
-      - name: 发布 Release
-        uses: samuelmeuli/action-electron-builder@v1
+      - name: 打包 Electron 应用（跳过 macOS DMG 避免 dmg-builder 问题）
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CSC_IDENTITY_AUTO_DISCOVERY: false
+        run: |
+          if [ "${{ matrix.os }}" = "macos-latest" ]; then
+            npx electron-builder --mac --publish never --dir
+          elif [ "${{ matrix.os }}" = "windows-latest" ]; then
+            npx electron-builder --win --publish never --dir
+          else
+            npx electron-builder --linux --publish never --dir
+          fi
+        working-directory: ./client
+
+      - name: 上传构建产物
+        uses: actions/upload-artifact@v4
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          release_draft: false
-          package_root: client
-          mac_certs: ${{ secrets.MAC_CERTS }}
-          mac_certs_password: ${{ secrets.MAC_CERTS_PASSWORD }}
-          # 如果提交带有版本标签（例如 "v1.0.0"），
-          # 构建完成后发布应用
-          release: ${{ startsWith(github.ref, 'refs/tags/v') }}
+          name: orange-code-desktop-${{ matrix.os }}
+          path: client/release/
+          retention-days: 30
