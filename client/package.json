@@ -10,8 +10,8 @@
   "scripts": {
     "dev": "concurrently \"vite\" \"npm run dev:electron\"",
     "dev:web": "vite",
-    "dev:electron": "wait-on tcp:5173 &amp;&amp; tsc -p electron/tsconfig.json &amp;&amp; electron .",
-    "build": "tsc &amp;&amp; vite build &amp;&amp; tsc -p electron/tsconfig.json",
+    "dev:electron": "wait-on tcp:5173 && tsc -p electron/tsconfig.json && electron .",
+    "build": "tsc && vite build && tsc -p electron/tsconfig.json",
     "preview": "vite preview",
     "pack": "electron-builder --dir",
     "pack:win": "electron-builder --win --dir",
