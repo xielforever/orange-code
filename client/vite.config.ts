@@ -5,6 +5,10 @@ import tailwindcss from '@tailwindcss/vite'
 // https://vite.dev/config/
 export default defineConfig({
   base: './', // 关键修改：让打包后的资源使用相对路径，适配 file:// 协议
+  server: {
+    host: '0.0.0.0', // 允许外部访问（WSL 需要）
+    port: 5173,
+  },
   plugins: [
     tailwindcss(),
     react()

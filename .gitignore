@@ -1,7 +1,54 @@
+# Python
 __pycache__/
-archive/
+*.pyc
+*.pyo
+*.pyd
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+
+# Rust
+rust/target/
+rust/Cargo.lock
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Client / Electron
+client/dist/
+client/dist-electron/
+client/release/
+client/out/
+client/.vite/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Local artifacts
 .omx/
 .oranged-agents/
-# Claude Code local artifacts
+archive/
+
+# Claude Code
 .claude/settings.local.json
 .claude/sessions/
+
+# Temporary files
+*.log
+*.tmp
+*.temp
+
+# Fix encoding scripts (temporary)
+fix_encoding.py
+fix_rust_encoding.py
+fix_all_encoding.py

@@ -1,4 +1,4 @@
-import { app, BrowserWindow, dialog } from 'electron';
+import { app, BrowserWindow, dialog, ipcMain } from 'electron';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
 import { spawn, ChildProcess } from 'child_process';
@@ -88,5 +88,39 @@ app.on('window-all-closed', function () {
 app.on('before-quit', () => {
   if (rustProcess) {
     rustProcess.kill('SIGTERM');
+  }
+});
+
+ipcMain.handle('select-folder', async () => {
+  const result = await dialog.showOpenDialog({
+    properties: ['openDirectory', 'createDirectory'],
+  });
+  if (!result.canceled && result.filePaths.length > 0) {
+    return result.filePaths[0];
+  }
+  return null;
+});
+
+ipcMain.handle('read-directory', async (_, dirPath: string) => {
+  try {
+    const entries = await fs.promises.readdir(dirPath, { withFileTypes: true });
+    return entries.map(entry => ({
+      name: entry.name,
+      isDirectory: entry.isDirectory(),
+      path: path.join(dirPath, entry.name),
+    }));
+  } catch (error) {
+    console.error('Failed to read directory:', error);
+    throw error;
+  }
+});
+
+ipcMain.handle('read-file', async (_, filePath: string) => {
+  try {
+    const content = await fs.promises.readFile(filePath, 'utf-8');
+    return content;
+  } catch (error) {
+    console.error('Failed to read file:', error);
+    throw error;
   }
 });
