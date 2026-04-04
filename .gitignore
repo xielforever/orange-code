@@ -18,6 +18,7 @@ node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+.pnpm-debug.log*
 
 # Client / Electron
 client/dist/
@@ -25,6 +26,7 @@ client/dist-electron/
 client/release/
 client/out/
 client/.vite/
+client/package-lock.json
 
 # IDE
 .vscode/
@@ -48,7 +50,5 @@ archive/
 *.tmp
 *.temp
 
-# Fix encoding scripts (temporary)
-fix_encoding.py
-fix_rust_encoding.py
-fix_all_encoding.py
+# Misc
+*.patch
