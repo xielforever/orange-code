@@ -3,134 +3,137 @@ name: 构建并发布桌面应用
 on:
   push:
     tags:
-      - 'v*' # 推送符合 v* 格式的标签时触发，例如 v1.0, v20.15.10
+      - 'v*'
 
 permissions:
   contents: write
 
+env:
+  APP_NAME: Orange
+
 jobs:
   build:
-    name: 在 ${{ matrix.os }} 上构建
+    name: 构建 ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
+
     strategy:
+      fail-fast: false
       matrix:
-        # 当前支持 Windows、macOS 和 Linux
         os: [ubuntu-latest, windows-latest, macos-latest]
 
     steps:
-      - name: 检出 Git 仓库
+      - name: 检出仓库
         uses: actions/checkout@v4
 
       - name: 安装 Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'npm'
-          cache-dependency-path: 'client/package-lock.json'
+          cache: npm
+          cache-dependency-path: client/package-lock.json
 
       - name: 安装 Rust 工具链
         uses: dtolnay/rust-toolchain@stable
-        with:
-          targets: x86_64-pc-windows-msvc, x86_64-apple-darwin, x86_64-unknown-linux-gnu
 
-      - name: 安装 Rust 依赖（Linux）
+      - name: 安装 Linux 系统依赖
         if: matrix.os == 'ubuntu-latest'
         run: |
           sudo apt-get update
-          sudo apt-get install -y libasound2-dev pkg-config libssl-dev libudev-dev
+          sudo apt-get install -y \
+            libasound2-dev \
+            libssl-dev \
+            libudev-dev \
+            pkg-config
 
       - name: 构建 Rust 后端
+        working-directory: rust
         run: cargo build --release
-        working-directory: ./rust
 
       - name: 安装前端依赖
+        working-directory: client
         run: npm ci
-        working-directory: ./client
 
-      - name: 同步 package 版本与 git tag
+      - name: 同步版本号（来自 tag）
         if: startsWith(github.ref, 'refs/tags/v')
         shell: bash
+        working-directory: client
         run: |
-          VERSION=${GITHUB_REF_NAME#v}
-          npm version $VERSION --no-git-tag-version
-        working-directory: ./client
+          VERSION="${GITHUB_REF_NAME#v}"
+          npm version "$VERSION" --no-git-tag-version
 
-      - name: 构建 React 和 Electron 应用
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: 构建前端
+        working-directory: client
         run: npm run build
-        working-directory: ./client
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: 打包 Electron 应用（macOS）
+      - name: 打包 Electron（macOS）
         if: matrix.os == 'macos-latest'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          CSC_IDENTITY_AUTO_DISCOVERY: false
+        working-directory: client
         run: npx electron-builder --mac --publish never
-        working-directory: ./client
 
-      - name: 打包 Electron 应用（Windows）
+      - name: 打包 Electron（Windows）
         if: matrix.os == 'windows-latest'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          CSC_IDENTITY_AUTO_DISCOVERY: false
+        working-directory: client
         run: npx electron-builder --win --publish never
-        working-directory: ./client
 
-      - name: 打包 Electron 应用（Linux）
+      - name: 打包 Electron（Linux）
         if: matrix.os == 'ubuntu-latest'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          CSC_IDENTITY_AUTO_DISCOVERY: false
+        working-directory: client
         run: npx electron-builder --linux --publish never
-        working-directory: ./client
+
+      - name: 规整产物命名（防止 Release 冲突）
+        shell: bash
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          OS="${{ matrix.os }}"
+          APP_NAME="${{ env.APP_NAME }}"
+          mkdir -p dist
+          
+          # 保持原始文件名，只移动到 dist 目录
+          find client/release -type f \( -iname "*.exe" -o -iname "*.zip" -o -iname "*.AppImage" \) -print0 | while IFS= read -r -d '' file; do
+            filename=$(basename "$file")
+            mv "$file" "dist/$filename"
+          done
 
       - name: 上传构建产物
         uses: actions/upload-artifact@v4
         with:
-          name: orange-code-desktop-${{ matrix.os }}
-          path: client/release/
-          retention-days: 30
+          name: desktop-${{ matrix.os }}
+          path: dist/*
+          retention-days: 14
 
   release:
     name: 创建 GitHub Release
-    needs: build
     runs-on: ubuntu-latest
+    needs: build
     if: startsWith(github.ref, 'refs/tags/v')
 
     steps:
-      - name: 检出 Git 仓库
-        uses: actions/checkout@v4
-
-      - name: 删除已有的 Release（如果存在）
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          TAG_NAME=${GITHUB_REF_NAME}
-          RELEASE_ID=$(curl -s -H "Authorization: token ${GITHUB_TOKEN}" \
-            "https://api.github.com/repos/${{ github.repository }}/releases/tags/${TAG_NAME}" | \
-            jq -r '.id // empty')
-          if [ -n "$RELEASE_ID" ]; then
-            echo "Deleting existing release: $RELEASE_ID"
-            curl -X DELETE -H "Authorization: token ${GITHUB_TOKEN}" \
-              "https://api.github.com/repos/${{ github.repository }}/releases/${RELEASE_ID}"
-          fi
-
       - name: 下载所有构建产物
         uses: actions/download-artifact@v4
         with:
-          path: ./artifacts
+          path: artifacts
 
-      - name: 显示下载的文件
-        run: ls -laR ./artifacts/
+      - name: 显示 Release 产物
+        run: ls -laR artifacts
 
-      - name: 创建 GitHub Release
-        uses: softprops/action-gh-release@v2
-        with:
-          files: ./artifacts/**/*.{exe,zip,AppImage}
-          draft: false
-          prerelease: false
-          generate_release_notes: true
-          fail_on_unmatched_files: false
+      - name: 删除已有的 Release（如果存在）
+        run: |
+          if gh release view "${GITHUB_REF_NAME}" >/dev/null 2>&1; then
+            echo "删除已有的 Release: ${GITHUB_REF_NAME}"
+            gh release delete "${GITHUB_REF_NAME}" --yes
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 创建 GitHub Release（稳定方案）
+        run: |
+          gh release create "${GITHUB_REF_NAME}" \
+            artifacts/**/* \
+            --generate-notes \
+            --verify-tag \
+            --draft=false \
+            --prerelease=false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
