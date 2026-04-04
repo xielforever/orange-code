@@ -61,18 +61,28 @@ jobs:
         run: npm run build
         working-directory: ./client
 
-      - name: 打包 Electron 应用（跳过 macOS DMG 避免 dmg-builder 问题）
+      - name: 打包 Electron 应用（macOS）
+        if: matrix.os == 'macos-latest'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CSC_IDENTITY_AUTO_DISCOVERY: false
-        run: |
-          if [ "${{ matrix.os }}" = "macos-latest" ]; then
-            npx electron-builder --mac --publish never --dir
-          elif [ "${{ matrix.os }}" = "windows-latest" ]; then
-            npx electron-builder --win --publish never --dir
-          else
-            npx electron-builder --linux --publish never --dir
-          fi
+        run: npx electron-builder --mac --publish never --dir
+        working-directory: ./client
+
+      - name: 打包 Electron 应用（Windows）
+        if: matrix.os == 'windows-latest'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CSC_IDENTITY_AUTO_DISCOVERY: false
+        run: npx electron-builder --win --publish never --dir
+        working-directory: ./client
+
+      - name: 打包 Electron 应用（Linux）
+        if: matrix.os == 'ubuntu-latest'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CSC_IDENTITY_AUTO_DISCOVERY: false
+        run: npx electron-builder --linux --publish never --dir
         working-directory: ./client
 
       - name: 上传构建产物
