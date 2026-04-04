@@ -9,8 +9,8 @@ permissions:
   contents: write
 
 jobs:
-  release:
-    name: 在 ${{ matrix.os }} 上构建并发布
+  build:
+    name: 在 ${{ matrix.os }} 上构建
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -66,7 +66,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CSC_IDENTITY_AUTO_DISCOVERY: false
-        run: npx electron-builder --mac --publish never --dir
+        run: npx electron-builder --mac --publish never
         working-directory: ./client
 
       - name: 打包 Electron 应用（Windows）
@@ -74,7 +74,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CSC_IDENTITY_AUTO_DISCOVERY: false
-        run: npx electron-builder --win --publish never --dir
+        run: npx electron-builder --win --publish never
         working-directory: ./client
 
       - name: 打包 Electron 应用（Linux）
@@ -82,7 +82,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CSC_IDENTITY_AUTO_DISCOVERY: false
-        run: npx electron-builder --linux --publish never --dir
+        run: npx electron-builder --linux --publish never
         working-directory: ./client
 
       - name: 上传构建产物
@@ -91,3 +91,36 @@ jobs:
           name: orange-code-desktop-${{ matrix.os }}
           path: client/release/
           retention-days: 30
+
+  release:
+    name: 创建 GitHub Release
+    needs: build
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+
+    steps:
+      - name: 检出 Git 仓库
+        uses: actions/checkout@v4
+
+      - name: 下载所有构建产物
+        uses: actions/download-artifact@v4
+        with:
+          path: ./artifacts
+
+      - name: 显示下载的文件
+        run: ls -la ./artifacts/
+
+      - name: 创建 GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            ./artifacts/**/*.exe
+            ./artifacts/**/*.dmg
+            ./artifacts/**/*.AppImage
+            ./artifacts/**/*.deb
+            ./artifacts/**/*.rpm
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
