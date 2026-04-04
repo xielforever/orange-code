@@ -116,6 +116,7 @@ jobs:
           files: |
             ./artifacts/**/*.exe
             ./artifacts/**/*.dmg
+            ./artifacts/**/*.zip
             ./artifacts/**/*.AppImage
             ./artifacts/**/*.deb
             ./artifacts/**/*.rpm
